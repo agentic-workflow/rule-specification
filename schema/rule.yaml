@@ -1,0 +1,124 @@
+$id: https://networknt.com/schemas/rule/1.0.0/rule.yaml
+$schema: https://json-schema.org/draft/2020-12/schema
+description: Light-Rule / YAML-Rule Configuration Schema.
+type: object
+properties:
+  ruleBodies:
+    type: object
+    title: RuleBodies
+    description: A dictionary mapping rule IDs to their corresponding rule definitions.
+    additionalProperties:
+      $ref: '#/$defs/rule'
+  endpointRules:
+    type: object
+    title: EndpointRules
+    description: A dictionary mapping service endpoints to their required or applied rules.
+    additionalProperties:
+      $ref: '#/$defs/endpointConfig'
+required: [ ruleBodies ]
+additionalProperties: false
+
+$defs:
+  rule:
+    type: object
+    title: Rule
+    description: A single rule containing conditions and actions.
+    properties:
+      ruleId:
+        type: string
+        title: RuleID
+        description: The unique identifier for the rule (e.g., com.networknt.rule.0001).
+      ruleDesc:
+        type: string
+        title: RuleDesc
+        description: A human-readable description of what this rule does.
+      conditions:
+        type: array
+        title: Conditions
+        description: A list of logical conditions that must be met for the rule's actions to trigger.
+        items:
+          $ref: '#/$defs/condition'
+      actions:
+        type: array
+        title: Actions
+        description: A list of actions that execute if the conditions evaluate to true.
+        items:
+          $ref: '#/$defs/action'
+    required: [ ruleId ]
+    additionalProperties: false
+    
+  condition:
+    type: object
+    title: RuleCondition
+    description: Describes an individual evaluation condition.
+    properties:
+      conditionId:
+        type: string
+        title: ConditionID
+        description: An optional identifier for the condition.
+      operator:
+        type: string
+        title: Operator
+        description: The logical operator used to compare the operand to the expected value. (e.g., ==, !=, >, <)
+      operand:
+        type: string
+        title: Operand
+        description: The data field or variable name to evaluate.
+      expected:
+        type: string
+        title: Expected
+        description: The value that the operand is compared against.
+      joinCode:
+        type: string
+        enum: [ AND, OR ]
+        title: JoinCode
+        description: Defines how this condition combines with subsequent conditions.
+    required: [ operator, operand ]
+    additionalProperties: false
+
+  action:
+    type: object
+    title: RuleAction
+    description: Describes a plugin or custom logic to execute if conditions are met.
+    properties:
+      actionId:
+        type: string
+        title: ActionID
+        description: An optional identifier for this action block.
+      actionClassName:
+        type: string
+        title: ActionClassName
+        description: The fully qualified class name or trait implementation identifier for the plugin to invoke.
+      actionValues:
+        type: object
+        title: ActionValues
+        description: Key-value parameters passed to the action plugin upon execution.
+        additionalProperties: true
+    required: [ actionClassName ]
+    additionalProperties: false
+
+  endpointConfig:
+    type: object
+    title: EndpointConfig
+    description: Describes the rule mapping structure for a given service endpoint.
+    properties:
+      req-tra:
+        type: array
+        items:
+          type: string
+        description: An array of rule IDs applied sequentially for request transformation.
+      res-tra:
+        type: array
+        items:
+          type: string
+        description: An array of rule IDs applied sequentially for response transformation.
+      access-control:
+        type: array
+        items:
+          type: string
+        description: An array of rule IDs applied in parallel for access control validation.
+      permission:
+        type: object
+        description: Optional permission overrides injected into the evaluation context.
+        additionalProperties: true
+    additionalProperties: true
