@@ -1,4 +1,4 @@
-$id: https://networknt.com/schemas/rule/1.0.0/rule.yaml
+$id: https://networknt.com/schemas/rule/1.1.0/rule.yaml
 $schema: https://json-schema.org/draft/2020-12/schema
 description: Light-Rule / YAML-Rule Configuration Schema.
 type: object
@@ -27,11 +27,24 @@ $defs:
       ruleId:
         type: string
         title: RuleID
-        description: The unique identifier for the rule (e.g., com.networknt.rule.0001).
+        description: The unique identifier for the rule (e.g., com.networknt.rule.0001). Must match the key in ruleBodies.
       ruleDesc:
         type: string
         title: RuleDesc
         description: A human-readable description of what this rule does.
+      version:
+        type: string
+        title: Version
+        description: Optional version string for governance.
+      author:
+        type: string
+        title: Author
+        description: Optional author tracking.
+      updatedAt:
+        type: string
+        format: date-time
+        title: UpdatedAt
+        description: Optional timestamp of the last update.
       conditions:
         type: array
         title: Conditions
@@ -58,21 +71,22 @@ $defs:
         description: An optional identifier for the condition.
       operator:
         type: string
+        enum: ["==", "!=", ">", "<", ">=", "<=", "eq", "ne", "contains", "matches", "startsWith", "endsWith", "exists", "notExists"]
         title: Operator
-        description: The logical operator used to compare the operand to the expected value. (e.g., ==, !=, >, <)
+        description: The logical operator used to compare the operand to the expected value.
       operand:
         type: string
         title: Operand
-        description: The data field or variable name to evaluate.
+        description: The data field, variable name, JSON Pointer, or JSONPath-like expression to evaluate against the input context.
       expected:
-        type: string
+        type: [string, number, boolean, array, object, "null"]
         title: Expected
         description: The value that the operand is compared against.
       joinCode:
         type: string
         enum: [ AND, OR ]
         title: JoinCode
-        description: Defines how this condition combines with subsequent conditions.
+        description: Defines how this condition combines with the previous condition. Flat condition arrays are evaluated left-to-right with no implicit operator precedence; use multiple rules when explicit grouping is required.
     required: [ operator, operand ]
     additionalProperties: false
 
@@ -100,7 +114,7 @@ $defs:
   endpointConfig:
     type: object
     title: EndpointConfig
-    description: Describes the rule mapping structure for a given service endpoint.
+    description: Describes the rule mapping structure for a given service endpoint. Custom extension phases are allowed only with an x- prefix.
     properties:
       req-tra:
         type: array
@@ -121,4 +135,10 @@ $defs:
         type: object
         description: Optional permission overrides injected into the evaluation context.
         additionalProperties: true
-    additionalProperties: true
+    patternProperties:
+      "^x-[A-Za-z0-9._-]+$":
+        type: array
+        items:
+          type: string
+        description: Extension rule phase. Extension phase names must start with x-.
+    additionalProperties: false
