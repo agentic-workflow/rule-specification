@@ -28,6 +28,19 @@ $defs:
         type: string
         title: RuleID
         description: The unique identifier for the rule (e.g., com.networknt.rule.0001). Must match the key in ruleBodies.
+      ruleName:
+        type: string
+        title: RuleName
+        description: Short human-readable name for selection lists and business users.
+      ruleType:
+        type: string
+        title: RuleType
+        description: Catalog type used to limit rule selection for different operations, such as access control, transformation, or validation.
+      common:
+        type: string
+        enum: [ Y, N ]
+        title: Common
+        description: Whether this rule can be shared by other hosts. Y means shared; N means host-specific.
       ruleDesc:
         type: string
         title: RuleDesc
@@ -61,7 +74,7 @@ $defs:
         description: A list of actions that execute if the conditions evaluate to true.
         items:
           $ref: '#/$defs/action'
-    required: [ ruleId ]
+    required: [ ruleId, ruleName, ruleType, common ]
     additionalProperties: false
     
   condition:
