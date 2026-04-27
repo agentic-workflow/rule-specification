@@ -92,9 +92,49 @@ $defs:
         description: Natural language condition description for business users and reviewers.
       operator:
         type: string
-        enum: ["==", "!=", ">", "<", ">=", "<=", "eq", "ne", "contains", "matches", "startsWith", "endsWith", "exists", "notExists"]
+        enum:
+          - "=="
+          - "!="
+          - ">"
+          - "<"
+          - ">="
+          - "<="
+          - eq
+          - ne
+          - equals
+          - notEquals
+          - greaterThan
+          - greaterThanOrEqual
+          - lessThan
+          - lessThanOrEqual
+          - contains
+          - notContains
+          - containsIgnoreCase
+          - inList
+          - notInList
+          - containsAny
+          - containsAll
+          - containsNone
+          - matches
+          - notMatches
+          - startsWith
+          - endsWith
+          - exists
+          - notExists
+          - isNull
+          - isNotNull
+          - isEmpty
+          - isNotEmpty
+          - isBlank
+          - isNotBlank
+          - lengthEquals
+          - lengthGreaterThan
+          - lengthLessThan
+          - before
+          - after
+          - on
         title: Operator
-        description: The logical operator used to compare the operand to the expected value.
+        description: The logical operator used to compare the operand to the expected value. Date/time operators use before, after, and on; on means date/time equality.
       operand:
         type: string
         title: Operand
