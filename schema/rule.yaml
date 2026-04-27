@@ -32,6 +32,10 @@ $defs:
         type: string
         title: RuleDesc
         description: A human-readable description of what this rule does.
+      hostId:
+        type: string
+        title: HostId
+        description: Optional host identifier for private or portal-managed rules. Common shared rules may omit it.
       version:
         type: string
         title: Version
@@ -69,6 +73,10 @@ $defs:
         type: string
         title: ConditionID
         description: An optional identifier for the condition.
+      conditionDesc:
+        type: string
+        title: ConditionDesc
+        description: Natural language condition description for business users and reviewers.
       operator:
         type: string
         enum: ["==", "!=", ">", "<", ">=", "<=", "eq", "ne", "contains", "matches", "startsWith", "endsWith", "exists", "notExists"]
@@ -99,16 +107,20 @@ $defs:
         type: string
         title: ActionID
         description: An optional identifier for this action block.
-      actionClassName:
+      actionDesc:
         type: string
-        title: ActionClassName
-        description: The fully qualified class name or trait implementation identifier for the plugin to invoke.
+        title: ActionDesc
+        description: Natural language action description for business users and reviewers.
+      actionRef:
+        type: string
+        title: ActionRef
+        description: Runtime-neutral action identifier resolved by the rule engine action registry. Java, Rust, and other runtimes map this reference to their local implementation.
       actionValues:
         type: object
         title: ActionValues
         description: Key-value parameters passed to the action plugin upon execution.
         additionalProperties: true
-    required: [ actionClassName ]
+    required: [ actionRef ]
     additionalProperties: false
 
   endpointConfig:
