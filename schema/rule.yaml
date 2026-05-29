@@ -22,7 +22,7 @@ $defs:
   rule:
     type: object
     title: Rule
-    description: A single rule containing conditions and actions.
+    description: A single rule containing either native conditions or one CEL expression plus actions.
     properties:
       ruleId:
         type: string
@@ -62,10 +62,20 @@ $defs:
         format: date-time
         title: UpdatedAt
         description: Optional timestamp of the last update.
+      conditionLanguage:
+        type: string
+        enum: [ native, cel ]
+        default: native
+        title: ConditionLanguage
+        description: Selects the condition evaluator for the whole rule. Native rules use the conditions array; CEL rules use the expression field. A rule must not mix both languages.
+      expression:
+        type: string
+        title: Expression
+        description: CEL expression evaluated against the input context when conditionLanguage is cel. The full context is available as context, and top-level context keys may also be exposed as variables by runtimes.
       conditions:
         type: array
         title: Conditions
-        description: A list of logical conditions that must be met for the rule's actions to trigger.
+        description: Native condition blocks. Used only when conditionLanguage is native or omitted.
         items:
           $ref: '#/$defs/condition'
       actions:
@@ -75,6 +85,19 @@ $defs:
         items:
           $ref: '#/$defs/action'
     required: [ ruleId, ruleName, ruleType, common ]
+    allOf:
+      - if:
+          properties:
+            conditionLanguage:
+              const: cel
+          required: [ conditionLanguage ]
+        then:
+          required: [ expression ]
+          not:
+            required: [ conditions ]
+        else:
+          not:
+            required: [ expression ]
     additionalProperties: false
     
   condition:
