@@ -68,6 +68,11 @@ $defs:
         default: native
         title: ConditionLanguage
         description: Selects the condition evaluator for the whole rule. Native rules use the conditions array; CEL rules use the expression field. A rule must not mix both languages.
+      conditionSecurityProfile:
+        type: string
+        enum: [ strict, standard, internal-admin ]
+        title: ConditionSecurityProfile
+        description: Optional runtime-owned CEL security profile request. The runtime computes the effective profile and rules must not define inline security limits.
       expression:
         type: string
         title: Expression
